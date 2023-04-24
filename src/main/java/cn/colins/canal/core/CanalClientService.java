@@ -139,7 +139,7 @@ public class CanalClientService implements Runnable {
         }
     }
 
-    private void disconnect(){
+    public void disconnect(){
         if(canalConnector!=null){
             canalConnector.disconnect();
         }

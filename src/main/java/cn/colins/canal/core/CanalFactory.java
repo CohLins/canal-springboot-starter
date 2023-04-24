@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.util.Assert;
 
+import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,6 +23,7 @@ public class CanalFactory implements SmartInitializingSingleton {
 
     public static ConcurrentHashMap<String, CanalServerInfo> CANAL_SERVER_CONFIG = new ConcurrentHashMap(8);
     public static ConcurrentHashMap<String, CanalDataHandler> CANAL_DATA_HANDLER = new ConcurrentHashMap(8);
+    public static ConcurrentHashMap<String, CanalClientService> CANAL_CLIENT_SERVICE = new ConcurrentHashMap(8);
 
 
     public static CanalConnector create(String address, boolean hasUseZk, String destination, String userName, String password) {
@@ -49,6 +52,28 @@ public class CanalFactory implements SmartInitializingSingleton {
 
     @Override
     public void afterSingletonsInstantiated() {
+        Iterator<CanalServerInfo> iterator = CANAL_SERVER_CONFIG.values().iterator();
+        while (iterator.hasNext()){
+            CanalServerInfo next = iterator.next();
+            next.getInstanceInfos().forEach(instanceInfo -> {
+                CanalConnector canalConnector = create(next.getAddress(), next.isHasUseZk(), instanceInfo.getDestination(), next.getUserName(), next.getPassword());
+                String canalServerKey = getCanalServerKey(next.getAlias(), instanceInfo.getDestination());
+                CANAL_CLIENT_SERVICE.put(canalServerKey,new CanalClientService(canalConnector,instanceInfo,canalServerKey));
+            });
+        }
 
+        Iterator<CanalClientService> serviceIterator = CANAL_CLIENT_SERVICE.values().iterator();
+        while (serviceIterator.hasNext()){
+            serviceIterator.next().start();
+        }
+    }
+
+
+    @PreDestroy
+    public void shutDown(){
+        Iterator<CanalClientService> iterator = CANAL_CLIENT_SERVICE.values().iterator();
+        while (iterator.hasNext()){
+            iterator.next().disconnect();
+        }
     }
 }
