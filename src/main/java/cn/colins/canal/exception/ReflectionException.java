@@ -2,7 +2,6 @@ package cn.colins.canal.exception;
 
 
 public class ReflectionException extends Exception {
-    private static final long serialVersionUID = 7642570221267566591L;
 
     public ReflectionException() {
     }

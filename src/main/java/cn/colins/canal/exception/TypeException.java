@@ -2,7 +2,6 @@ package cn.colins.canal.exception;
 
 
 public class TypeException extends RuntimeException {
-    private static final long serialVersionUID = 8614420898975117130L;
 
     public TypeException() {
     }
