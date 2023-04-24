@@ -20,7 +20,7 @@ public @interface CanalInstanceAnnotation {
     /**
      * 监听表的表达式
      **/
-    String subscribe() default "*.*";
+    String subscribe() default ".*\\\\..*";
 
     /**
      * 一次拉取多少条消息

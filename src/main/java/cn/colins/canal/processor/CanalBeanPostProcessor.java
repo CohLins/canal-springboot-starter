@@ -14,7 +14,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
-
+import java.util.HashSet;
 
 
 public class CanalBeanPostProcessor implements BeanPostProcessor {
@@ -27,7 +27,7 @@ public class CanalBeanPostProcessor implements BeanPostProcessor {
         canalServerConfig.getServerInfos().forEach(canalServerInfo -> {
             Assert.notNull(canalServerInfo.getAddress(), "canal server address list is null");
             Assert.notNull(canalServerInfo.getAlias(), "canal server alias list is null");
-            canalServerInfo.setInstanceInfos(Collections.EMPTY_SET);
+            canalServerInfo.setInstanceInfos(new HashSet<>());
             Assert.isTrue(CanalFactory.CANAL_SERVER_CONFIG.put(canalServerInfo.getAlias(), canalServerInfo) == null, "canal server alias or address non-repeatable");
         });
     }

@@ -4,19 +4,11 @@ import cn.colins.canal.entity.CanalData;
 
 public interface CanalDataHandler {
 
-    default void insertHandler(CanalData data){
+     void insertHandler(CanalData data);
 
-    }
+     void updateHandler(CanalData data);
 
-    default void updateHandler(CanalData data){
+     void deleteHandler(CanalData data);
 
-    }
-
-    default void deleteHandler(CanalData data){
-
-    }
-
-    default boolean errorHandler(CanalData data,Exception e){
-        return true;
-    }
+     boolean errorHandler(CanalData data,Exception e);
 }

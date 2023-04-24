@@ -34,7 +34,7 @@ public class CanalFactory implements SmartInitializingSingleton {
             String[] hosts = address.split(",");
             for (String hostInfo : hosts) {
                 String[] hostAndPort = hostInfo.split(":");
-                Assert.isTrue(hostAndPort.length != 2, address + " Incorrect format");
+                Assert.isTrue(hostAndPort.length == 2, address + " Incorrect format");
                 inetSocketAddressList.add(new InetSocketAddress(hostAndPort[0], Integer.valueOf(hostAndPort[1])));
             }
             return CanalConnectors.newClusterConnector(inetSocketAddressList, destination, userName, password);
