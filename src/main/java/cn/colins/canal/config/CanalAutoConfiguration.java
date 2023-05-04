@@ -1,7 +1,6 @@
 package cn.colins.canal.config;
 
 
-
 import cn.colins.canal.core.CanalFactory;
 import cn.colins.canal.processor.CanalBeanPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -16,14 +15,14 @@ import org.springframework.context.annotation.Configuration;
 public class CanalAutoConfiguration {
 
     @Bean
-    @ConditionalOnProperty(value = "canal.server.enable" ,havingValue = "true" )
-    public CanalBeanPostProcessor canalBeanPostProcessor(CanalServerConfig canalServerConfig){
+    @ConditionalOnProperty(value = "canal.server.enable", havingValue = "true")
+    public CanalBeanPostProcessor canalBeanPostProcessor(CanalServerConfig canalServerConfig) {
         return new CanalBeanPostProcessor(canalServerConfig);
     }
 
     @Bean
     @ConditionalOnBean(CanalBeanPostProcessor.class)
-    public CanalFactory canalFactory(CanalServerConfig canalServerConfig){
+    public CanalFactory canalFactory() {
         return new CanalFactory();
     }
 }

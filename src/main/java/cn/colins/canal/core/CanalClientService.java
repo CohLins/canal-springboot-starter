@@ -67,7 +67,7 @@ public class CanalClientService implements Runnable {
             if (retryNum < maxRetryNum) {
                 restart(e);
             } else {
-                log.error(" canalServer:[{}] exception occurred：{}，{}", serverKey, e.getMessage(), e);
+                log.error(" canalServer:[{}] exception occurred：{}", serverKey, e.getMessage(), e);
             }
         } finally {
             disconnect();
@@ -102,7 +102,7 @@ public class CanalClientService implements Runnable {
                             canalDataHandler.insertHandler(canalData);
                         }
                     }catch (Exception e){
-                        log.error("canalServer:[{}] msg:{} handler error:{}",serverKey, JSON.toJSON(canalData),e);
+                        log.error("canalServer:[{}] msg:{} handler error",serverKey, JSON.toJSON(canalData),e);
                         if(canalDataHandler.errorHandler(canalData,e)){
                             canalConnector.rollback(batchId);
                         }

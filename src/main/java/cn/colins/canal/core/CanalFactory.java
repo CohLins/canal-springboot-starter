@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PreDestroy;
 import java.net.InetSocketAddress;
@@ -53,26 +54,29 @@ public class CanalFactory implements SmartInitializingSingleton {
     @Override
     public void afterSingletonsInstantiated() {
         Iterator<CanalServerInfo> iterator = CANAL_SERVER_CONFIG.values().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             CanalServerInfo next = iterator.next();
+            if (CollectionUtils.isEmpty(next.getInstanceInfos())) {
+                log.warn("CanalServer:[{}] no instance is configured ", next.getAlias());
+            }
             next.getInstanceInfos().forEach(instanceInfo -> {
                 CanalConnector canalConnector = create(next.getAddress(), next.isHasUseZk(), instanceInfo.getDestination(), next.getUserName(), next.getPassword());
                 String canalServerKey = getCanalServerKey(next.getAlias(), instanceInfo.getDestination());
-                CANAL_CLIENT_SERVICE.put(canalServerKey,new CanalClientService(canalConnector,instanceInfo,canalServerKey));
+                CANAL_CLIENT_SERVICE.put(canalServerKey, new CanalClientService(canalConnector, instanceInfo, canalServerKey));
             });
         }
 
         Iterator<CanalClientService> serviceIterator = CANAL_CLIENT_SERVICE.values().iterator();
-        while (serviceIterator.hasNext()){
+        while (serviceIterator.hasNext()) {
             serviceIterator.next().start();
         }
     }
 
 
     @PreDestroy
-    public void shutDown(){
+    public void shutDown() {
         Iterator<CanalClientService> iterator = CANAL_CLIENT_SERVICE.values().iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             iterator.next().disconnect();
         }
     }
